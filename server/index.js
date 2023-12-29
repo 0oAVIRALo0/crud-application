@@ -50,7 +50,7 @@ app.post("/create", async (req, res) => {
         await userData.save();
         res.status(201).json({
             status: "Success",
-            message: userData, 
+            message: "Data saved successfully", 
             data: userData
         })
     } catch (err) {
