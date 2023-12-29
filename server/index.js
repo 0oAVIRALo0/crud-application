@@ -45,12 +45,59 @@ app.get("/", async (req, res) => {
 
 // CREATE 
 app.post("/create", async (req, res) => {
-    console.log(req.body)
-    res.status(200).json({
-        status: "success",
-        message: "Data received"
-    })
+    const userData = new userModel(req.body);
+    try {
+        await userData.save();
+        res.status(201).json({
+            status: "Success",
+            message: userData, 
+            data: userData
+        })
+    } catch (err) {
+        res.status(500).json({
+            status: "failed",
+            message: err.message
+        })
+    }
 })
+
+// UPDATE
+app.put("/update/:id", async (req, res) => {
+    const updatedUser = await userModel.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    })
+    try {
+        res.status(200).json({
+            status: "success",
+            message: "Updated",
+            data: updatedUser  
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: "failed",
+            message: err.message
+        })
+    }
+})
+
+// DELETE
+app.delete("/delete/:id", async (req, res) => {
+    const deleteUser = await userModel.findByIdAndDelete(req.params.id)
+    try {
+        res.status(200).json({
+            status: "success",
+            message: "Deleted",
+            data: deleteUser  
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: "failed",
+            message: err.message
+        })
+    }
+})
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
