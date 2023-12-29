@@ -49,7 +49,7 @@ app.post("/create", async (req, res) => {
     try {
         await userData.save();
         res.status(201).json({
-            status: "Success",
+            status: "success",
             message: "Data saved successfully", 
             data: userData
         })

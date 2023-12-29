@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios'
+// import Form from './components/Form';
 import './App.css'
 
 axios.defaults.baseURL = "http://localhost:8080/"
@@ -11,6 +12,8 @@ function App() {
     email: '',
     phone: ''
   })
+
+  const [dataList, setDataList] = useState([])
 
   const handleOnChange = (event) => {
     const {name, value} = event.target
@@ -29,19 +32,47 @@ function App() {
     event.preventDefault();
     const data = await axios.post("/create", formData)
     console.log(data)
-    if (data.data.status === "Success") {
+    if (data.data.status === "success") {
       alert(data.data.message)
       setFormdata({
         name: '',
         email: '',
         phone: ''
       })
+      getFetchData()
     }
   }
 
-  const handleFetchData = async () => {
-    
-  } 
+  const getFetchData = async () => {
+    const data = await axios.get("/")
+    console.log(data)
+    if (data.data.status === "success") {
+      setDataList(data.data.data)
+      // alert(data.data.message)
+    }
+  }
+  
+  useEffect(() => {
+    getFetchData() 
+  }, [])
+
+  // console.log(dataList)
+
+  const handleDelete = async (id) => {
+    const data = await axios.delete(`/delete/${id}`)
+    if (data.data.status === "success") {
+      getFetchData()
+      alert(data.data.message)
+    }
+  }
+
+  const handleUpdate = async (id) => {
+    const data = await axios.put(`/update/${id}`, formData)
+    if (data.data.status === "success") {
+      getFetchData()
+      alert(data.data.message)
+    }
+  }
 
   return (
     <>
@@ -63,6 +94,38 @@ function App() {
           </form>
         )
       }
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          { 
+            dataList[0] ? ( dataList.map((data) => {
+              return (
+                <tr>
+                  <td>{data.name}</td>
+                  <td>{data.email}</td>
+                  <td>{data.phone}</td>
+                  <td><button onClick={() => handleUpdate(data._id)}>Edit</button></td>
+                  <td><button onClick={() => handleDelete(data._id)}>Delete</button></td>
+                </tr>
+              )
+            }))
+            : (
+              <tr>
+                <td colSpan="4">No data</td>
+              </tr>
+            )
+          }
+        </tbody>
+      </table>
+
     </>
   )
 }
