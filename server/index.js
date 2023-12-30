@@ -62,11 +62,13 @@ app.post("/create", async (req, res) => {
 })
 
 // UPDATE
-app.put("/update/:id", async (req, res) => {
-    const updatedUser = await userModel.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
-    })
+app.put("/update", async (req, res) => {
+    // const updatedUser = await userModel.findByIdAndUpdate(req.params.id, req.body, {
+    //     new: true,
+    //     runValidators: true
+    // })
+    const { _id, ...rest } = req.body;
+    const updatedUser = await userModel.updateOne({ _id: _id }, rest)
     try {
         res.status(200).json({
             status: "success",

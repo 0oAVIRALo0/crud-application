@@ -74,11 +74,13 @@ function App() {
     }
   }
 
-  const handleUpdate = async (id) => {
-    const data = await axios.put(`/update/${id}`, formData)
+  const handleUpdate = async (event) => {
+    event.preventDefault()
+    const data = await axios.put("/update", editFormData)
     if (data.data.status === "success") {
       getFetchData()
       alert(data.data.message)
+      setEditSection(false)
     }
   }
 
@@ -122,7 +124,7 @@ function App() {
           { 
             dataList[0] ? ( dataList.map((data) => {
               return (
-                <tr>
+                <tr key={data._id}>
                   <td>{data.name}</td>
                   <td>{data.email}</td>
                   <td>{data.phone}</td>
