@@ -9,7 +9,7 @@ app.use(bodyParser.json())
 
 const PORT = process.env.PORT || 8080;
 
-const DB = "mongodb+srv://crud-app:12345@cluster0.w7h8loc.mongodb.net/";
+const DB = String;
 mongoose.connect(DB).then(() => {
     console.log("Connected to Database")
 }).catch((err) => {
