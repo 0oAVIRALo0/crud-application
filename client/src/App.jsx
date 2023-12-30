@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios'
-// import Form from './components/Form';
+import Form from './components/Form';
 import './App.css'
 
 axios.defaults.baseURL = "http://localhost:8080/"
@@ -10,10 +10,18 @@ function App() {
   const [formData, setFormdata] = useState({
     name: '',
     email: '',
-    phone: ''
+    phone: '',
   })
 
   const [dataList, setDataList] = useState([])
+  const [editSection, setEditSection] = useState(false)
+
+  const [editFormData, setEditFormdata] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    _id: ''
+  })
 
   const handleOnChange = (event) => {
     const {name, value} = event.target
@@ -74,26 +82,32 @@ function App() {
     }
   }
 
+  const handleEditOnChange = async (event) => {
+    const { name, value } = event.target;
+    setEditFormdata({...editFormData, [name]: value})
+  }
+
+  const handleEdit = async (data) => {
+    setEditFormdata(data)
+    setEditSection(true)
+  }
+
   return (
     <>
-      <button onClick={handleAddSection}>Add</button>
 
-      {addSection && (
-          <form onSubmit={handleSumbit}>
-            <label htmlFor="">Name: </label>
-            <input type="text" name='name' value={formData.name} onChange={handleOnChange}/>
+      
+        <button onClick={handleAddSection}>Add</button>
 
-            <label htmlFor="">Email: </label>
-            <input type="email" name='email' value={formData.email} onChange={handleOnChange}/>
+        {addSection && (
+            <Form handleSumbit={handleSumbit} handleOnChange={handleOnChange} handleCloseSection={handleCloseSection} props={formData}/>
+          )
+        }
 
-            <label htmlFor="">Phone: </label>
-            <input type="number" name='phone' value={formData.phone} onChange={handleOnChange}/>
-
-            <button>Submit</button>
-            <button onClick={handleCloseSection}>Close</button>
-          </form>
-        )
-      }
+        {editSection && (
+            <Form handleSumbit={handleUpdate} handleOnChange={handleEditOnChange} handleCloseSection={() => setEditSection(false)} props={editFormData}/>
+          )
+        }
+      
 
       <table>
         <thead>
@@ -112,7 +126,7 @@ function App() {
                   <td>{data.name}</td>
                   <td>{data.email}</td>
                   <td>{data.phone}</td>
-                  <td><button onClick={() => handleUpdate(data._id)}>Edit</button></td>
+                  <td><button onClick={() => handleEdit(data)}>Edit</button></td>
                   <td><button onClick={() => handleDelete(data._id)}>Delete</button></td>
                 </tr>
               )
